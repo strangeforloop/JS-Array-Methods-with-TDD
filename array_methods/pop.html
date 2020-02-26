@@ -1,0 +1,55 @@
+<script src="../simpletest.js"></script>
+<script>
+  // Prototype Function
+  // function pop(array) {
+  //   if (array.length === 0) {
+  //     return undefined;
+  //   }
+
+  //   var poppedElement = array[array.length - 1]
+  //   array.length--;
+  //   return poppedElement;
+  // }
+  
+  // Requirements:
+  // It should return the last elemnent of the array
+  // It should remove the last element of the array
+  // If the array is empty, it should return undefined
+  // 
+
+  function pop(array) {
+    if (array.length === 0) {
+      return undefined;
+    }
+
+    var poppedElement = array[array.length - 1]
+    array.length--;
+    return poppedElement;
+  }
+
+  tests({
+    'It should return the last element of the array.': function() {
+      var popResult = pop([1]);
+      eq(popResult, 1);
+    },
+    'It should remove the last element of the array.': function() {
+      var array = [1, 2];
+      pop(array);
+      eq(array[array.length - 1], 1);
+    },
+    'If the array is empty, it should return undefined.': function() {
+      var popResult = pop([]);
+      eq(popResult, undefined);
+    },
+    'It should work on array-like objects.': function() {
+      var obj1 = {
+        length: 1,
+        0: 'angel'
+      };
+      var popResult = pop(obj1);
+      eq(popResult, 'angel');
+      eq(obj1.length, 1);
+    }
+  })
+
+</script>

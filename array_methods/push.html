@@ -5,9 +5,7 @@
   // Requirements:
   // It should append items to the end of the array
   // It should return the length of the array with elements appended
-  // 
   // If push called without any elements to append, it should return the length of the original array
-  // 
 
   function push(array, element) {
     if (arguments.length === 1) {
@@ -15,16 +13,26 @@
     }
 
     // If there are two arguments, push the second arg to the first array
-    if (arguments.length === 2) {
-      array[array.length] = element;
-      return array.length;
-    }
+    // if (arguments.length === 2) {
+    //   console.log('two args');
+    //   array[array.length] = element;
+    //   return array.length;
+    // }
 
     if (Array.isArray(arguments[1])) {
+      console.log('is array');
       for (var i = 0; i < arguments[1].length; i++) {
         array[array.length] = arguments[1][i];
       }
       return array.length;
+    }
+
+    // handle object specifically
+    if (typeof array === 'object' && !(array instanceof Array)) {
+      console.log('got here');
+      array[array.length] = element;
+      array.length++;
+      return length;
     }
 
     array[array.length] = element;
@@ -56,12 +64,20 @@
     var secondArray = [3];
     var pushResult = push(firstArray, secondArray);
     eq(pushResult, 2);
+    eq(firstArray[0], 2);
+    eq(firstArray[1], 3);
   },
   'It should be able to use objects in an array-like fashion.': function() {
-    fail();
-    var obj1 = {};
+    var obj1 = {
+      length: 0,
+    };
     var obj2 = {};
     push(obj1, obj2);
+    eq(obj1.length, 1);
+    // key of the prop with length value should be obj2
+    var indexPushedTo = Object.getOwnPropertyNames(obj1)[0];
+    eq(typeof obj1[indexPushedTo], 'object');
+    eq(Object.keys(obj2).length, 0);
   }
   });
 </script>

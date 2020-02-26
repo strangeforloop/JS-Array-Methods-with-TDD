@@ -1,0 +1,63 @@
+<script src="../simpletest.js"></script>
+<script>
+  // Prototype Function
+  // function shift(array) {
+  //   if (array.length === 0) {
+  //     return undefined;
+  //   }
+
+  //   var elementToReturn = array[0];
+
+  //   for (var i = 1; i < array.length; i++) {
+  //     array[i - 1] = array[i];
+  //   }
+  //   array.length--;
+  //   return elementToReturn;
+  // }
+
+  // Requirements:
+  // It should remove the zeroeth item and shift consecutive elements down
+  // It should return the item at the zeroth index
+  // If length is 0, it should return undefined
+  // 
+  function shift(array) {
+    if (array.length === 0) {
+      return undefined;
+    }
+
+    var elementToReturn = array[0];
+
+    for (var i = 1; i < array.length; i++) {
+      array[i - 1] = array[i];
+    }
+    array.length--;
+    return elementToReturn;
+  }
+
+  tests({
+    'It shouldreturn the item at the zeroth index.': function () {
+      var shiftResult = shift([1]);
+      eq(shiftResult, 1);
+    },
+    'It should remove the zeroeth item and shift consecutive elements down.': function () {
+      var array = [1, 2];
+      shift(array);
+      eq(array.length, 1);
+      eq(array[0], 2);
+    },
+    'If length is 0, it should return undefined.': function () {
+      var shiftResult = shift([]);
+      eq(shiftResult, undefined);
+    },
+    'It should work on array-like objects.': function () {
+      var obj1 = {
+        length: 1,
+        0: 'angel'
+      };
+      var shiftResult = shift(obj1);
+      eq(shiftResult, 'angel');
+      eq(obj1.length, 0);
+    }
+  })
+
+</script>
