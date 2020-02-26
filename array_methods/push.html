@@ -1,0 +1,67 @@
+<script src="../simpletest.js"></script>
+<script>
+  // Prototype Function
+
+  // Requirements:
+  // It should append items to the end of the array
+  // It should return the length of the array with elements appended
+  // 
+  // If push called without any elements to append, it should return the length of the original array
+  // 
+
+  function push(array, element) {
+    if (arguments.length === 1) {
+      return array;
+    }
+
+    // If there are two arguments, push the second arg to the first array
+    if (arguments.length === 2) {
+      array[array.length] = element;
+      return array.length;
+    }
+
+    if (Array.isArray(arguments[1])) {
+      for (var i = 0; i < arguments[1].length; i++) {
+        array[array.length] = arguments[1][i];
+      }
+      return array.length;
+    }
+
+    array[array.length] = element;
+
+    if (arguments.length > 2) {
+      for (var i = 2; i < arguments.length; i++) {
+        array[array.length] = arguments[i];
+      }
+    }
+    return array.length;
+  }
+
+  tests({
+  'It should append items to the end of the input array.': function() {
+    var array = [1];
+    push(array, 2);
+    eq(array[1], 2);
+  },
+  'It should return the length of the array with elements appended.': function() {
+    var pushResult = push([1], 2);
+    eq(pushResult, 2);
+  },
+  'If push called without any elements to append, it should return the length of the original array.': function() {
+    var pushResult = push([1]);
+    eq(pushResult.length, 1);
+  },
+  'It should be able to merge two arrays.': function() {
+    var firstArray = [2];
+    var secondArray = [3];
+    var pushResult = push(firstArray, secondArray);
+    eq(pushResult, 2);
+  },
+  'It should be able to use objects in an array-like fashion.': function() {
+    fail();
+    var obj1 = {};
+    var obj2 = {};
+    push(obj1, obj2);
+  }
+  });
+</script>

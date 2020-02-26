@@ -1,0 +1,61 @@
+<script src="../simpletest.js"></script>
+
+<script>
+  // Prototype Function
+  // function includes(array, valueToFind) {
+  //   for (var i = 0; i < array.length; i++) {
+  //     if (array[i] === valueToFind) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
+
+  // Requirements:
+  // It should return true if the valueToFind is in the array
+  // It should return false if the valueToFind is not in the array
+  // It should take the valueToFind as the second argument
+  // It can take an optional fromIndex as the index to start the search at
+  // If fromIndex is positive, the first index to be searched is fromIndex
+  // If fromIndex is negative, the first index to be searched is at arr.length + fromIndex
+
+  function includes(array, valueToFind, fromIndex) {
+    var startingIndex = 0;
+
+    if (arguments.length === 3) {
+      if (fromIndex < 0) {
+        startingIndex = array.length + fromIndex;
+      } else {
+        startingIndex = fromIndex;
+      }
+    }
+
+    for (var i = startingIndex; i < array.length; i++) {
+      if (array[i] === valueToFind) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  tests({
+    'It should return true if the valueToFind is in the array': function () {
+      var includesResult = includes([1, 2], 1);
+      eq(includesResult, true);
+    },
+    'It should return false if the valueToFind is not in the array': function () {
+      var includesResult = includes([2], 3);
+      eq(includesResult, false);
+    },
+    'It can take an optional fromIndex as the index to start the search at': function () {
+      var includesResult = includes([2, 1], 2, 1);
+      eq(includesResult, false);
+    },
+    'If fromIndex if negative, the first index to be searched is at arr.length + fromIndex': function () {
+      var includesResult = includes([3, 5, 2], 3, -2);
+      eq(includesResult, false);
+    }
+  });
+</script>
+
+</script>

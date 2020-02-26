@@ -1,0 +1,125 @@
+<script src="../simpletest.js"></script>
+<script>
+  // Prototype Function
+  // function slice(array, begin, end) {
+  //   var indexToStopAt = array.length;
+  //   if (arguments.length === 3) 
+  //     indexToStopAt = end;
+  //   }
+
+  //   var newArray = [];
+
+  //   for (var i = begin; i < indexToStopAt; i++) {
+  //     newArray.push(array[i]);
+  //   }
+
+  //   return newArray;
+  // }
+
+  function slice(array, begin, end) {
+    var indexToStopAt = array.length;
+
+    if (arguments.length === 3) {
+      if (end < 0) {
+        indexToStopAt = array.length + end;
+      } else {
+        indexToStopAt = end;
+      }
+    }
+
+    if (begin < 0) {
+      begin = indexToStopAt + begin;
+    }
+
+    var newArray = [];
+
+    for (var i = begin; i < indexToStopAt; i++) {
+      newArray.push(array[i]);
+    }
+
+    return newArray;
+  }
+
+  // Requirements:
+  // If no endIndex if specified, it should return a shallow copy of the elements from the originalArray from the startIndex ti the end of the originalArray
+  // If an endIndex is specified, it should return a shallow copy of the elements  from startIndex up to but not including the element at endIndex
+  // It should not alter the original array
+  // If an object reference is copied into the newArray, changes to the object in the originalArray also reflect in the newArray
+  // New elements added to newArray should not affect originalArray
+  // New elements added to originalArray should not affect newArray
+  
+  tests({
+    'It should return an array.': function() {
+      var array = [1, 2];
+      var sliceResultArray = slice(array);
+      eq(Array.isArray(sliceResultArray), true);
+    },
+    'If a negative number is used as startIndex, it will extract the last startIndex number of elements': function () {
+      var sliceResultArray = slice([1, 2], -1);
+      eq(sliceResultArray.length, 1);
+      eq(sliceResultArray[0], 2);
+    },
+    'If a negative number is used as endIndex, it will extract from startIndex and exclude the last endIndex number of elements': function() {
+      var sliceResultArray = slice([1, 2, 3], 0, -1);
+      eq(sliceResultArray.length, 2);
+      eq(sliceResultArray[0], 1);    
+    },
+    'If no endIndex if specified, it should return an array that is a shallow copy of the elements from the originalArray from startIndex to the end of the originalArray.': function() {
+      var sliceResultArray = slice([1], 0);
+      eq(sliceResultArray.length, 1);
+      eq(sliceResultArray[0], 1);
+    },
+    'If an endIndex is specified and it is within the range of the array, it should return an array that is a shallow copy of the elements from startIndex up to but not including the element at endIndex.': function() {
+      var sliceResultArray = slice([1, 2, 3], 1, 2);
+      eq(sliceResultArray.length, 1);
+      eq(sliceResultArray[0], 2);
+    },
+    'It should return nested elements as a shallow copy.': function() {
+      var sliceResultArray = slice([1, [2, 3]], 1);
+      eq(sliceResultArray.length, 1);
+      eq(sliceResultArray[0][0], 2);
+      eq(sliceResultArray[0][1], 3);
+      
+    },
+    'If an endIndex is specified and is greater than the range of the array, it should return a copy of the elements of the originalArray from startIndex up through the end of the originalArray.': function () {
+      var sliceResultArray = slice([1, 2, 3], 1, 3);
+      eq(sliceResultArray.length, 2);
+      eq(sliceResultArray[0], 2);
+      eq(sliceResultArray[1], 3);
+    },
+    'Changes to primitive elements in the originalArray should not alter sliceResultArray.': function() {
+      var originalArray = [1];
+      var sliceResultArray = slice(originalArray, 0);
+      originalArray[0] = 2;
+      eq(sliceResultArray.length, 1);
+      eq(sliceResultArray[0], 1);
+    },
+    'Changes to primitive elements in the sliceResultArray should not alter originalArray.': function () {
+      var originalArray = [1];
+      var sliceResultArray = slice(originalArray, 0);
+      sliceResultArray[0] = 2;
+      eq(originalArray.length, 1);
+      eq(originalArray[0], 1);
+    },
+    'If an object reference is copied into the newArray, changes to the object in the originalArray also reflect in the newArray.': function() {
+      var originalArray = [{name: 'Anna'}];
+      var sliceResultArray = slice(originalArray, 0);
+      originalArray[0].name = 'Laura';
+      eq(sliceResultArray[0].name, 'Laura');
+    },
+    'New elements added to sliceResultArray should not affect originalArray.': function() {
+      var originalArray = [1];
+      var sliceResultArray = slice(originalArray, 0);
+      sliceResultArray.push(2);
+      eq(originalArray, 1);
+      eq(originalArray[0], 1);
+    },
+    'New elements added to originalArray should not affect sliceResultArray.': function() {
+      var originalArray = [1];
+      var sliceResultArray = slice(originalArray, 0);
+      originalArray.push(2);
+      eq(sliceResultArray, 1);
+      eq(sliceResultArray[0], 1);    
+    }
+  });
+</script>

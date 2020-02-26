@@ -1,0 +1,89 @@
+<script src="../simpletest.js"></script>
+<script>
+  // Prototype Function
+  // function join(array, separator) {
+  //   var delimter = ',';
+
+  //   if (arguments.length === 2) {
+  //     delimiter = separator; 
+  //   }
+  //   var returnString = '';
+  //   for (var i = 0; i < array.length - 1; i++) {
+  //     returnString += array[i];
+  //     returnString += delimiter;
+  //   }
+  //   //     newArray.push(array[array.length - 1]);
+  //   returnString += array[array.length - 1];
+  //   return returnString;
+  // }
+
+  function join(array, separator) {
+    var returnString = '';
+    var delimiter = ',';
+
+    if (arguments.length === 2) {
+      delimiter = separator; 
+    }
+
+    if (array.length) {
+      for (var i = 0; i < array.length - 1; i++) {
+        if (array[i] === undefined || array[i] === null || (Array.isArray(array[0]) && array[0].length === 0)) {
+          console.log('hey');
+          returnString += '';
+          returnString += delimiter;
+        } else {
+          returnString += array[i];
+          returnString += delimiter;
+        }
+      }
+
+      if (array[array.length - 1] != undefined || array[array.length - 1] != null || Array.isArray(array[array.length - 1]) && array[array.length - 1].length === 0) {
+        returnString += array[array.length - 1];
+      }
+    }
+
+    return returnString;
+  }
+  // Requirements:
+  // It should return a string that is the concatentation of the elements in the array, separated by the separator
+  // If no separator is specified, it should delimit the array elements with ","
+  // If a separator is specified, it should should the array elements by the separator
+  // If the array is empty, it should return the empty string
+  // If and element is undefined, null, or an empty array, it should convert it to an empty string
+
+  tests({
+  'It should return a string that is the concatentation of the elements in the array, separated by the separator': function() {
+    var joinResult = join([1, 2]);
+    eq(joinResult, '1,2');
+  },
+  'If the array is empty, it should return the empty string': function() {
+    var joinResult = join([]);
+    eq(joinResult.length, 0);
+  },
+  'If no separator is specified, it should delimit the array elements with ","': function() {
+    var joinResult = join([1, 2]);
+    eq(joinResult[1], ',');
+  },
+  'If a separator is specified, it should should the array elements by the separator': function() {
+    var delimiter = '/';
+    var joinResult = join([1, 2], delimiter);
+    eq(joinResult[1], delimiter);
+  },
+  'If an element is undefined it should convert it to an empty string': function() {
+    var joinResult = join([ , 2]);
+    eq(joinResult[0], ',');
+  },
+  'If an element is null it should convert it to an empty string': function () {
+    var joinResult = join([null]);
+    eq(joinResult, '');
+  },
+  'If an element is an empty array, it should convert it to an empty string': function () {
+    var joinResult = join([], 2);
+    eq(joinResult, '');
+  },
+  'If the array is one element, it should return that element': function() {
+    var joinResult = join([1]);
+    eq(joinResult, 1);
+  }
+  });
+</script>

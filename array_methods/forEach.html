@@ -1,0 +1,77 @@
+<script src="../tinytest.js"></script>
+<script>
+
+//   Example 1:
+//   forEach([1, 2, 3], function () {
+//     console.log('hi');
+//   })
+
+//   Example 2:
+//   forEach([1, 2, 3], function (name) {
+//     console.log(name);
+//   })
+
+//   Example 3:
+//   forEach([1, 2, 3], function (name, index) {
+//    console.log(index);
+//   })
+
+//   Example 4:
+//   forEach([1, 2, 3], function (name, index, originalArray) {
+//    console.log(originalArray);
+//   })-->
+
+function forEach(array, callback, optionalThisObject) {
+  var forEachCallback = callback;
+
+  if (optionalThisObject) {
+    // want to bind optionalThisObject to the callback function
+    forEachCallback = callback.bind(optionalThisObject);
+  }
+  for (var i = 0; i < array.length; i++) {
+    forEachCallback(array[i], i, array);
+  }
+}
+
+tests({
+  'It should run the callback function array.length times.': function() {
+    // fail();
+    var numberofTimesCallbackHasRun = 0;
+    forEach([1, 2, 3], function () {
+      numberofTimesCallbackHasRun++;
+    })
+    eq(numberofTimesCallbackHasRun, 3);
+  },
+
+  'It should pass in the ith element as the first argument to the callback.': function() {
+    // fail();
+    // you want to check that the ith element is accessible inside the callback
+    forEach([1], function (number) {
+      eq(number, 1);
+    })
+  },
+
+  'It should pass in the ith position as the second argument to the callback': function() {
+    forEach([1], function (name, index) {
+      // check if the index is what you think it should be
+      // that index is 0
+      eq(index, 0);
+    })
+  },
+
+  'It should pass in the original array as the third argument to the callback': function() {
+    var testArray = [1, 2, 3];
+    forEach(testArray , function (name, index, originalArray) {
+      eq(originalArray, testArray);
+    })
+  },
+
+  'It should accept an optional this object': function() {
+    forEach([1], function () {
+      // inside of here, this should be equal to the configurable this obj
+      // so, this.description should be equal to 'Configurable this object'
+      eq(this.description, 'I should be accessible inside the callback');
+    }, {description: 'I should be accessible inside the callback'});
+  }
+});
+</script>

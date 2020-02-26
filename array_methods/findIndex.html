@@ -1,0 +1,107 @@
+<script src="../simpletest.js"></script>
+<script>
+
+// Function Prototype
+// function findIndex(array, callback) {
+//   for (var i = 0; i < array.length; i++) {
+//     if (callback(array[i])) {
+//       return i;
+//     }
+//   }
+// }
+
+function findIndex(array, callback, optionalThis) {
+  var length = array.length;
+  var findIndexCallback = callback;
+
+  if (optionalThis) {
+    findIndexCallback = callback.bind(optionalThis);
+  }
+
+  for (var i = 0; i < length; i++) {
+    if(findIndexCallback(array[i], i, array)) {
+      return i;
+    }
+  }
+  return -1;
+}
+  tests({
+    'Execute the callback function once for every index in the array until it finds one where callback returns a truthy value.': function () {
+      var numberOfTimesCallbackHasRun = 0;
+
+      findIndex([2, 3], function (element) {
+        numberOfTimesCallbackHasRun++;
+        return element === 2;
+      });
+      eq(numberOfTimesCallbackHasRun, 1);
+    },
+    'It should pass ith element as the first argument to the callback.': function () {
+      findIndex([1], function (element) {
+        eq(element, 1);
+      });
+    },
+    'It can pass the optionalIndex as the second argument to the callback.': function () {
+      findIndex([1], function (element, optionalIndex) {
+        eq(optionalIndex, 0);
+      })
+    },
+    'It can pass optionalArray as the third argument to the callback.': function () {
+      var array = [1];
+      findIndex(array, function (element, optionalIndex, originalArray) {
+        eq(originalArray, array);
+      });
+    },
+    'It can pass optionalThis as the fourth argument to the callback.': function () {
+      findIndex([1], function (element, optionalIndex, originalArray, optionalThis) {
+        eq(this.description, 'I am an object to be used as this');
+      }, { description: 'I am an object to be used as this' });
+    },
+    'findIndex does not mutate the originalArray.': function () {
+      var originalArray = [1, 2, 3];
+
+      var copyOfOriginalArray = [...originalArray];
+
+      findIndex(originalArray, function () {});
+      eq(JSON.stringify(originalArray), JSON.stringify(copyOfOriginalArray));
+    },
+    'If the callback returns truthy, find should immediately return the index on which the callback was run on.': function () {
+      var returnValue = findIndex([1, 2], function (element) {
+        return element < 2;
+      });
+      eq(returnValue, 0);
+    },
+    'If the callback never returns truthy, return -1.': function () {
+      var returnValue = findIndex([1, 2], function (element) {
+        return element > 10;
+      });
+      eq(returnValue, -1);
+    },
+    'Callback can be called on indexes with unassigned values': function() {
+      var originalArray = [1, , 3];
+      findIndex(originalArray, function(element, index) {
+        if (index === 1) {
+          eq(element, undefined);
+        }
+      })
+    },
+    'Callback does not get called on elements added to the originalArray': function () {
+      var originalArray = [1];
+      var numberOfTimesCallbackHasRun = 0;
+
+      findIndex(originalArray, function (element, index, array) {
+        numberOfTimesCallbackHasRun++;
+        array.push(2);
+      });
+      eq(numberOfTimesCallbackHasRun, 1);
+    },
+    'If callback changes the value of element before find visits it, find gives callback the value of the element when find does visit it': function () {
+      var originalArray = [1, 3];
+      find(originalArray, function (element, index, array) {
+        array[1] = 7;
+        if (index === 1) {
+          eq(element, 7);
+        }
+      });
+    }
+  })
+</script>

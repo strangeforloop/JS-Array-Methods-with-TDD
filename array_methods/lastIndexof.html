@@ -1,0 +1,60 @@
+<script src="../simpletest.js"></script>
+
+<script>
+  // Prototype Function
+  // function lastIndexOf(array, searchItem) {
+  //   for (var i = array.length; i >= 0; i--) {
+  //     if (array[i] === searchItem) {
+  //       return i;
+  //   }
+  // }
+  //   return -1;
+  // }
+
+  // Requirements:
+  // It should return the last index at which the searchElement is equal to the element
+  // It should take an array to search through as the first argument
+  // It should take the searchElement as the second argument
+  // It can take the fromIndex as the index to start the search at
+  // It should return -1 if the searchElement is not found in the array 
+
+  function lastIndexOf(array, searchElement, fromIndex) {
+    var startingIndex = array.length - 1;
+
+    if (arguments.length === 3) {
+      if (fromIndex < 0) {
+        startingIndex = array.length - Math.abs(fromIndex);
+      } else {
+        startingIndex = fromIndex;
+      }
+    }
+
+    for (var i = startingIndex; i >= 0; i--) {
+        if (array[i] === searchElement) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  tests({
+  'It should return the last index at which the searchElement is equal to the element': function() {
+    var lastIndexOfResult = lastIndexOf([1, 1], 1);
+    eq(lastIndexOfResult, 1);
+  },
+  'It can take an optional fromIndex as the index to start the search at': function() {
+    var lastIndexOfResult = lastIndexOf([2, 2], 2, 1);
+    eq(lastIndexOfResult, 1);
+  },
+  'It should return -1 if the searchElement is not found in the array': function() {
+    var lastIndexOfResult = lastIndexOf([1], 2);
+    eq(lastIndexOfResult, -1);
+  }, 
+  'If fromIndex if negative, use it as an offset from the end of the array': function() {
+    var lastIndexOfResult = lastIndexOf([2, 5, 2, 2], 2, -2);
+    eq(lastIndexOfResult, 2);
+  }
+  });
+</script>
+
+</script>

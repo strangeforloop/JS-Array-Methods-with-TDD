@@ -1,0 +1,132 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // Prototype Implementation:
+  // function some(array, callback) {
+  //   for (var i = 0; i < array.length; i++) {
+  //     if (i in array) {
+  //       if (callback(array[i])) {
+  //         return true;
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // }
+
+  // Requirements:
+  // It should pass element as the first argument to the callback.
+  // It can pass optionalIndex as the second argument to the callback.
+  // It can pass optionalArray as the third argument to the callback.
+  // It can pass optionalThis as the fourth argument to the callback.
+  
+  // Executes callback for each element until it finds one where callback returns a truthy value, then returns true immediately
+  // If should return false if callback applied to each element never returns truthy.
+  
+  // It should not mutate the array on which it is called.
+  // It should set the range of elements to be processed before the first invocation of callback.
+  // It should not run callback on elements appended to the array after the call to some().
+  // It should not call callback for indexes which have been deleted or have not been assigned values.
+  // If an existing, unvisited element of the array is changed by callback, its value passed to callback should be the value at the time that some() visits the index
+
+  function some(array, callback, optionalThis) {
+    var someCallback = callback;
+    var length = array.length;
+
+    if (optionalThis) {
+      someCallback = callback.bind(optionalThis);
+    }
+    for(var i = 0; i < length; i++) {
+      if (i in array) {
+        if(someCallback(array[i], i, array)) {
+          return true;
+        }
+     }
+    }
+    return false;
+  }
+
+  tests({
+    'It should pass element as the first argument to the callback.': function() {
+      var array = [1];
+      some(array, function(element) {
+        eq(element, 1);
+      });
+    },
+    'It can pass optionalIndex as the second argument to the callback.': function() {
+      var array = [1];
+      some(array, function (element, index) {
+        eq(index, 0);
+      });
+    },
+    'It can pass optionalArray as the third argument to the callback.': function() {
+      var array = [1];
+      some(array, function (element, index, optionalOriginalArray) {
+        eq(array, optionalOriginalArray);
+      });
+    }, 
+    'It can pass optionalThis as the fourth argument to the callback.': function() {
+      some([1], function(element) {
+        eq(this.description, 'I am the object to use as this.');
+      }, {description: 'I am the object to use as this.'});
+    },
+    'If optionalThis is not provided, the value of `this` will be determined by usual rules.': function(element) {
+      some([1], function() {
+        eq(this, window);
+      });
+    },
+    'Executes callback for each element until it finds one where callback returns a truthy value': function() {
+      var numberOfTimesCallbackHasRun = 0;
+      some([1, 2], function(element) {
+        numberOfTimesCallbackHasRun++;
+        return element < 2;
+      });
+      eq(numberOfTimesCallbackHasRun, 1);
+    },
+    'If should return false if the callback applied to each element never returns truthy.': function() {
+      var someResult = some([1,2], function(element) {
+        return element > 3;
+      });
+      eq(someResult, false);
+    },
+    'It should not mutate the array on which it is called.': function() {
+      var array = [1, 2, 3];
+      var copyOfArray = [...array];
+
+      some(array, function (element, index, array) { });
+      // compare the contents of the array, not the actual arrays
+      eq(JSON.stringify(array), JSON.stringify(copyOfArray));
+    },
+    // 'It should set the range of elements to be processed before the first invocation of callback.': function() {
+    //   fail();
+    // },
+    'It should not run callback on elements appended to the array after the call to some().': function() {
+      var array = [1, 2];
+      var length = array.length;
+      var numberOfTimesCallbackHasRun = 0;
+      some(array, function(element) {
+        array.push(3);
+        numberOfTimesCallbackHasRun++;
+      });
+      eq(numberOfTimesCallbackHasRun, 2);
+    },
+    'It should not call callback for indexes which have been deleted or have not been assigned values.': function() {
+      var array = [1, 2, 3];
+      var numberOfTimesCallbackHasRun = 0;
+      delete array[1];
+
+      some(array, function() {
+        numberOfTimesCallbackHasRun++;
+      });
+      eq(numberOfTimesCallbackHasRun, Object.keys(array).length);
+    }, 
+    'If an existing, unvisited element of the array is changed by callback, its value passed to callback should be the value at the time that some() visits the index': function() {
+      var array = [1, 2];
+      some(array, function(element, index, array) {
+        array[1] = 5;
+        if (index === 1) {
+          eq(element, 5);
+        }
+      });
+    }
+  });
+</script>

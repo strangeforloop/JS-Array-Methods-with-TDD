@@ -1,0 +1,158 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // Function Prototype
+  // function every(array, callback) {
+  //   for (var i = 0; i < array.length; i++) {
+  //     if (!callback(array[i])) {
+  //       return false;
+  //     }
+  //   }
+  //   return true;
+  // }
+
+// Executes the callback once for each element present until it finds one wher the callback returns a false value
+
+// It should provide element as the first arguemnt to callback
+// It can provide optionalIndex as the second argument to callback
+// It can provide optionalArray as the third argument to callback
+// It can provide optionalThis as the fourth argument to callback
+
+// If callback returns a falsy value for an element, return false
+// If callback returns a truthy value for all elements, return true.
+
+// It should not be invoked on indexes which have been deleted
+  // Does this mean not to run every on indexes for which the callback deleted the element? 
+// It should not be invoked on indexes which have never been assigned values
+
+// It should not mutate the array on which it is called
+
+// Callback should not run on elements appended to array after the original call to every
+
+// If elements are changed before they are visited by the callback, the callback should be called on the value of the element at the time find visits them
+
+function every(array, callback, optionalThis) {
+  console.log('');
+  var everyCallback = callback;
+  var length = array.length;
+  if (optionalThis) {
+    everyCallback = callback.bind(optionalThis);
+  }
+  console.log('array length: ', length);
+  console.log('array:', array);
+  
+  for (var i = 0; i < length; i++) {
+    console.log('i is: ', i);
+    if (i in array) {  // check if it hasn't been deleted or empty
+      // if callback returns false, return false right away
+      // problem: however, can't only do this check of !everyCallback(): 
+      // because functions without a return value
+      // return undefined which get coerced to false and !false becomes true
+      var everyResult = everyCallback(array[i], i, array);
+      if (everyResult !== undefined && !everyResult) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+  tests({
+    'It can run on every element in the array': function() {
+      var numberOfTimesCallbackHasRun = 0;
+      every([1, 2, 3], function() {
+        numberOfTimesCallbackHasRun++;
+      });
+      eq(numberOfTimesCallbackHasRun, 3);
+    },
+    'Executes the callback once for each element present until it finds one where the callback returns a falsy value': function () {
+      var numberOfTimesCallbackHasRun = 0;
+      
+      every([2, 3, 4], function (element) {
+        numberOfTimesCallbackHasRun++;
+        return element < 3;
+      });
+      eq(numberOfTimesCallbackHasRun, 2);
+    },
+    'It should pass ith element as the first argument to the callback.': function () {
+      every([1], function (element) {
+        eq(element, 1);
+      });
+    },
+    'It can pass the optionalIndex as the second argument to the callback.': function () {
+      every([1], function (element, optionalIndex) {
+        eq(optionalIndex, 0);
+      })
+    },
+    'It can pass optionalArray as the third argument to the callback.': function () {
+      var array = [1];
+      every(array, function (element, optionalIndex, originalArray) {
+        eq(originalArray, array);
+      });
+    },
+    'It can pass optionalThis as the fourth argument to the callback.': function () {
+      every([1], function (element, optionalIndex, originalArray, optionalThis) {
+        eq(this.description, 'I am an object to be used as this');
+      }, { description: 'I am an object to be used as this' });
+    },
+    'If callback returns a falsy value for an element, return false.': function () {
+      var returnValue;
+      returnValue = every([1], function (element) {
+        return element === 5;
+      });
+      eq(returnValue, false);
+    },
+    'If callback returns a truthy value for all elements, return true.': function () {
+      var returnValue = every([1], function (element) {
+        return element === 1;
+      });
+      eq(returnValue, true);
+    },
+    'It should not be invoked on indexes which have been deleted.': function () {
+      var array = [1, 2, 3];
+      delete array[1];
+      var numberOfTimesCallbackHasRun = 0;
+      
+      var result = every(array, function (element, index, array) {
+        numberOfTimesCallbackHasRun++;
+      });
+      // why is this false
+      // console.log('return value', result);
+      eq(numberOfTimesCallbackHasRun, Object.keys(array).length);
+    },
+    'It should not run on elements that have never been assigned values' : function() {
+      var array = [1, 2];
+      var numberOfTimesCallbackHasRun = 0;
+      every(array, function(element, index) {
+        console.log(index);
+        numberOfTimesCallbackHasRun++;
+      });
+      eq(numberOfTimesCallbackHasRun, 2);
+    },
+    'It should not mutate the array on which it is called': function () {
+      var originalArray = [1, 2, 3];
+      var copyOfOriginalArray = [...originalArray];
+
+      every(originalArray, function () {});
+      eq(JSON.stringify(originalArray), JSON.stringify(copyOfOriginalArray));
+    },
+    'Callback does not get called on elements added to the originalArray': function () {
+      var originalArray = [1];
+      var numberOfTimesCallbackHasRun = 0;
+
+      every(originalArray, function (element, index, array) {
+        numberOfTimesCallbackHasRun++;
+        array.push(2);
+      });
+      eq(numberOfTimesCallbackHasRun, 1);
+    },
+    'If callback changes the value of element before find visits it, find gives callback the value of the element when find does visit it': function () {
+      var originalArray = [1, 3];
+      every(originalArray, function (element, index, array) {
+        array[1] = 7;
+        if (index === 1) {
+          eq(element, 7);
+        }
+      });
+    }
+  })
+</script>

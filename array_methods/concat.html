@@ -1,0 +1,65 @@
+<script src="../simpletest.js"></script>
+<script>
+
+  // Prototype Implementation:
+  // function concat(str1, str2) {
+  //   var resultingString = str1 + str2;
+  //   if (arguments.length > 2) {
+  //     // get number of things to concatenate
+
+  //     for (var i = 2; i < arguments.length; i++) {
+  //       resultingString += arguments[i];
+  //     }
+  //   }
+  //   return resultingString;
+  // }
+
+  // Requirements:
+  // It should accept a string as the first argument
+  // It should accept a string as the second argument
+  // It should concatenate the string arguments to the first string argument
+  // Changes to the original string or the returned string do not affect each other
+  // If arguments are not of type string, they are converted to string values before concatenating
+
+  function concat(str1, str2) {
+    var resultingString = str1 + str2;
+    if (arguments.length > 2) {
+
+      for (var i = 2; i < arguments.length; i++) {
+        resultingString += arguments[i];
+      }
+    }
+    return resultingString;
+  }
+
+  tests({
+    'It should accept a string as the first argument': function() {
+      var string1 = 'a';
+      eq(typeof(string1), "string");
+      concat(string1, 'b');
+    },
+    'It should accept a string as the second argument': function() {
+      var string2 = 'b'
+      eq(typeof (string2), "string");
+      concat('a', string2);
+    },
+    'It should concatenate additonal string arguments to the first string argument': function() {
+      var concatResult = concat('a', 'b', 'c');
+      eq(concatResult, 'abc');
+    },
+    'It should return the concatenation': function() {
+      var concatResult = concat('a', 'b');
+      eq(concatResult, 'ab');
+    },
+    'Changes to the original string or the returned string do not affect each other': function() {
+      // ???????
+      var originalString = 'a';
+      var concatResult = concat(originalString, 'b');
+      eq(originalString, 'a');
+    },
+    'If arguments of index 1 and beyond are not of type string, they are converted to string values before concatenating': function() {
+      var concatResult = concat('a', 1);
+      eq(concatResult, 'a1');
+    }
+  });
+</script>
