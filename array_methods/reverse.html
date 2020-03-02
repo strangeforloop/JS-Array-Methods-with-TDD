@@ -1,0 +1,51 @@
+<script src="../simpletest.js"></script>
+<script>
+  // Requirements:
+  // It should reverse the array in place
+  // It should return the reversed array
+  // It should work on array-like objects 
+
+  function reverse(array) {
+    if (array.length === 0) {
+      return array;
+    }
+
+    var start = 0;
+    var end = array.length - 1;
+    var temp;
+
+    while (start < end) {
+      temp = array[start];
+      array[start] = array[end];
+      array[end] = temp;
+      start++;
+      end--;
+    }
+    return array;
+  }
+
+  tests({
+    'It should reverse the array in place.': function () {
+      var array = [1, 2];
+      var reverseResult = reverse(array);
+      eq(array[0], 2);
+      eq(array[1], 1);
+    },
+    'It should return the reversed array.': function () {
+      var reverseResult = reverse([1, 2]);
+      eq(reverseResult[0], 2);
+      eq(reverseResult[1], 1);
+    },
+    'It should work on array-like objects.': function () {
+      var obj1 = {
+        length: 2,
+        0: 'angel',
+        1: 'cloud'
+      };
+      var reverseResult = reverse(obj1);
+      eq(reverseResult[0], 'cloud');
+      eq(reverseResult[1], 'angel');
+    }
+  })
+
+</script>

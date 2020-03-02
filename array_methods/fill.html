@@ -1,0 +1,95 @@
+<script src="../simpletest.js"></script>
+<script>
+  // Prototype Function
+  // function fill(array, value, start, end) {
+  //   if (arguments.length < 3) {
+  //     start = 0;
+  //   }
+
+  //   if (arguments.length < 4) {
+  //     end = array.length;
+  //   }
+
+  //   for (var i = start; i < end; i++) {
+  //     array[i] = value;
+  //   }
+  //   return array;
+  // }
+
+  // Requirements:
+  // It should change all elements in the array from the start to the end to the provided value
+  // It should return the modified array
+  // If start is not provided, it should start at index 0
+  // If end if not provided, it should end at array.length
+  // If start is negative, it should be treated as array.length + start
+  // If end is negative, it should be treated as array.length + end
+  // It should modify the input array rather than returning a copy
+  // If the input is an object, it will copy its reference and fill the array with references to that object
+
+  function fill(array, value, start, end) {
+    if (arguments.length < 3) {
+      start = 0;
+    }
+
+    if (arguments.length < 4) {
+      end = array.length;
+    }
+
+    if (start < 0) {
+      start = array.length + start;
+    }
+
+    if (end < 0) {
+      end = array.length + end;
+    }
+
+    for (var i = start; i < end; i++) {
+      array[i] = value;
+    }
+
+    return array;
+  }
+
+  tests({
+    'It should change all elements in the array from the start to the end to the provided value': function() {
+      var fillResult = fill([1, 2], 9, 1);
+      eq(fillResult[1], 9);
+    },
+    'It should return an array': function() {
+      var fillResult = fill([1, 2], 9, 1);
+      eq(Array.isArray(fillResult), true);
+    },
+    'If start is not provided, it should start at index 0': function() {
+      var fillResult = fill([1, 2], 9);
+      eq(fillResult[0], 9);
+      eq(fillResult[1], 9);
+    },
+    'If end if not provided, it should end at array.length': function() {
+      var array = [1, 2];
+      var fillResult = fill([1, 2], 9);
+      eq(fillResult[0], 9);
+      eq(fillResult[array.length - 1], 9);
+    },
+    'If start is negative, it should be treated as array.length + start': function() {
+      var fillResult = fill([1, 2], 9, -1);
+      eq(fillResult[0], 1);
+      eq(fillResult[1], 9);
+     },
+    'If end is negative, it should be treated as array.length + end': function() {
+      var fillResult = fill([1, 2], 9, 0, -1);
+      eq(fillResult[0], 9);
+      eq(fillResult[1], 2);
+    },
+    'It should modify the input array rather than returning a copy': function() {
+      var array = [1];
+      var fillResult = fill(array, 9);
+      eq(array[0], 9);    
+    },
+    'If the input is an object, it will copy its reference and fill the array with references to that object': function() {
+      var array = [1, 2];
+      var fillResult = fill(array, {name: 'anna'}, 1);
+      eq(fillResult[1].name, 'anna');
+    }
+  })
+
+</script>

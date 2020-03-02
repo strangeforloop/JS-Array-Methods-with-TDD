@@ -1,16 +1,68 @@
 <script src="../simpletest.js"></script>
 <script>
-  // Prototype Function
+  function unshift(array, el1, el2) {
+    // -- handle objects specifically
+     if (Object.prototype.toString(array) === "[object Object]" && !(array instanceof Array)) {
 
+      for (var i = 1; i < arguments.length; i++) {
+        array[array.length] = arguments[i];
+        array.length++;
+      }
+       return array.length;
+    }
+
+    // -- handle regular arrays
+    var copyOfOriginalArray = [...array];
+
+    // initially start storing at the beginning of the array
+    var indexToStoreElementAt = 0;
+
+    // store elements at the beginning of array
+    for (var i = 1; i < arguments.length; i++) {
+      array[indexToStoreElementAt] = arguments[i];
+      indexToStoreElementAt++;
+    }
+
+    // add elements from the copy of original array to the end
+    for (var i = 0; i < copyOfOriginalArray.length; i++) {
+      array[indexToStoreElementAt] = copyOfOriginalArray[i];
+      indexToStoreElementAt++;
+    }
+    return array.length;
+  }
 
   // Requirements:
-  // It should add one or more elements to the beginning of an array
+  // It should add one or more elements to the beginning of the original array
   // It should return the new length of the array
   // It should work on array-like objects
-  // If multiple elements are passed as parameters, they should be inserted in the same order they were passed as parameters
-  
+  // If multiple elements are passed as parameters, they should be inserted in the same order they were passed as
+
   tests({
-   
+  'It should add one or more elements to the beginning of the original array.': function() {
+    var array = [1];
+    unshift(array, 2);
+    eq(array[0], 2);
+  },
+  'It should return the new length of the array.': function() {
+    var unshiftResult = unshift([1], 2);
+    eq(unshiftResult, 2);  
+  },
+  // weirdly, the native behavior for unshift on objects appends items to end of the object instead of the beginning
+  'It should work on array-like objects.': function() {
+    var obj1 = {
+      length: 1,
+      0: 'cherry'
+    };
+    unshift(obj1, 'pear');
+    eq(obj1.length, 2);
+    eq(obj1[0], 'cherry');
+  },
+  'If multiple elements are passed as parameters, they should be inserted in the same order they were passed in as.': function() {
+    var array = [1];
+    unshift(array, 2, 3);
+    eq(array[0], 2);
+    eq(array[1], 3);
+  }  
   })
 
 </script>
